@@ -7,10 +7,7 @@ export const protect = async (req: any, res: any, next: any) => {
     const token = req.cookies.token;
 
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "Not authenticated",
-      });
+      throw new ApiError(401, "Not authenticated");
     }
 
     const decoded = verifyToken(token) as any;
@@ -24,7 +21,11 @@ export const protect = async (req: any, res: any, next: any) => {
     req.user = user; // optional, useful for UI
     req.userId = user._id.toString();
     next();
-  } catch (error) {
+  } catch (error: any) {
+    console.log("Auth error:", error);
+    if (error.name === "TokenExpiredError") {
+      return next(new ApiError(401, "Token expired"));
+    }
     next(error);
   }
 };

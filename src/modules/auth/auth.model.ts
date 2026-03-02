@@ -9,6 +9,13 @@ export interface IUser extends mongoose.Document {
   plan: { enum: string[] };
   createdAt: Date;
   updatedAt: Date;
+  bio : string ; 
+  avatar: string;
+  avatarPublicId: string;
+  preferences : {
+    emailNotification : boolean ; 
+    marketingEmailNotification : boolean 
+  }
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -22,6 +29,29 @@ const userSchema = new mongoose.Schema<IUser>(
       enum: ["free", "pro"],
       default: "free",
     },
+    bio : {
+      type : String , 
+      default : ""
+    } , 
+    avatar: {
+      type: String,
+      default: "",
+    },
+    avatarPublicId: {
+      type: String,
+      default: "",
+    },
+    preferences : {
+      emailNotification : {
+        type : Boolean , 
+        default : true
+      } , 
+      marketingEmailNotification : {
+        type : Boolean , 
+        default : false
+      }
+    }
+    
   },
   {
     timestamps: true,

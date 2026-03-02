@@ -1,4 +1,4 @@
-import { login, signup, logout, getUserById } from "./auth.service";
+import { login, signup, logout, getUserById, updatePassword } from "./auth.service";
 
 import { asyncHandler } from "../../utils/asynchandler";
 
@@ -39,10 +39,16 @@ const getUserController = asyncHandler(async (req: any, res: any) => {
   const user = await getUserById(userId);
   return res.status(200).json(user);
 });
+const updateUserPasswordController = asyncHandler(async(req: any, res: any)=>{
+  const {email, newPassword} = req.body;
+  const updatedUser = await updatePassword(email, newPassword);
+  return res.status(200).json(updatedUser);
+})
 
 export {
   signupController,
   loginController,
   logoutController,
   getUserController,
+  updateUserPasswordController
 };

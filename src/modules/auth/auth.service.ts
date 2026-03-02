@@ -41,6 +41,8 @@ async function login(email: string, password: string) {
     id: user._id,
     email: user.email,
     name: user.name,
+    bio: user.bio,
+    image: user.avatar
   };
   return { user: safeUser, token };
 }
@@ -62,5 +64,19 @@ async function getUserById(userId: string) {
 
   return user;
 }
+async function updatePassword( email:string, newPassword: string){
+  const user = await User.findOne({email})
+  if (!user) {
+    throw new Error("User not found");
+  }
+  if (newPassword.length < 6) {
+    throw new ApiError(400, "Password must be at least 6 characters long");
+  }
+  user.password = newPassword;
+  user.tokenversion += 1;
+  await user.save();
 
-export { signup, login, logout, getUserById };
+
+}
+
+export { signup, login, logout, getUserById, updatePassword };

@@ -13,6 +13,8 @@ import getApiUsageRoute from "./modules/apiUsage/apiUsage.route";
 import getOverallUsage from "./modules/overallUsage/overAllUsage.route";
 import generateApiKey from "./modules/apiKey/apiKey.route";
 import dashbord from "./modules/dashboard/dashboard.route";
+import userRoutes from "./modules/user/user.route";
+import mediaRoutes from "./media/media.route";
 import { startApiUsageWorker } from "./modules/apiUsage/worker/apiUsage.worker";
 import errorMiddleware from "./middleware/error.middleware";
 import { authRateLimiter } from "./middleware/rateLimiter.middleware";
@@ -53,6 +55,8 @@ app.use("/api/analytics", apiRateLimiter, getApiUsageRoute);
 app.use("/api/usage", apiRateLimiter, getOverallUsage);
 app.use("/api/api-keys", apiRateLimiter, generateApiKey);
 app.use("/api/dashboard", apiRateLimiter, dashbord);
+app.use("/api/user", apiRateLimiter, userRoutes);
+app.use("/api/media", apiRateLimiter, mediaRoutes);
 // Developer API (versioned)
 app.use("/api/v1/links", apiRateLimiter, developersRoute);
 
