@@ -25,7 +25,7 @@ export const flushApiUsage = async () => {
       const hour = parseInt(parts[4]);
 
       const totalRequests = await redis.get(key);
-      console.log(totalRequests);
+     
       if (!totalRequests) continue;
 
       const count = Number(totalRequests);
