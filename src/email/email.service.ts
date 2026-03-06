@@ -16,7 +16,13 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS, // Gmail App Password
   },
-});
+  tls: {
+    rejectUnauthorized: false
+  },
+  // Force IPv4 in Node.js
+  family: 4
+} as any);
+
 
 // ── Verify connection on startup ──
 transporter.verify().then(() => {
