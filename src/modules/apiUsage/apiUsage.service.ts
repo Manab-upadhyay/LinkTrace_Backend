@@ -21,5 +21,8 @@ export const incrementApiUsage = async (
 export const getApiUsage = async (userId: string) => {
   return ApirouteUsage.find({
     userId,
+    createdAt: {
+      $gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // last 24h
+    },
   });
 };
