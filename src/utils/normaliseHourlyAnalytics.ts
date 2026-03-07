@@ -3,11 +3,18 @@ export default function normalizeHourlyData(rawData: any[]) {
   const hoursMap = new Map<number, number>();
 
   rawData.forEach((item) => {
-    const hour = item.hour ?? item._id?.hour; // supports both structures
+    let utcHour = item.hour ?? item._id?.hour ?? item._id; // The hour from the DB (in UTC)
     const total = item.total ?? item.totalClicks ?? item.totalRequests ?? 0;
 
-    if (hour !== undefined) {
-      hoursMap.set(hour, total);
+    if (utcHour !== undefined) {
+      // Create a date object for today at the given UTC hour
+      const date = new Date();
+      date.setUTCHours(utcHour, 0, 0, 0);
+
+      // Extract the local hour (IST) from that date
+      const localHour = date.getHours(); 
+      
+      hoursMap.set(localHour, total);
     }
   });
 
