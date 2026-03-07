@@ -31,12 +31,24 @@ const app = express();
 app.use(helmet());
 app.use(express.json());
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://link-trace-2k76.vercel.app",
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-  }),
+  })
 );
+console.log(process.env.FRONTEND_URL);
 
 app.use(cookieParser());
 
@@ -45,7 +57,7 @@ app.use(cookieParser());
 ======================= */
 startApiUsageWorker();
 app.get("/", (req, res) => {
-  res.send("URL Shortener API running 🚀");
+  res.send("URL Shortener API running");
 });
 app.use("/api/auth", authRateLimiter, authRoutes);
 app.use("/api/email", emailRoute);
