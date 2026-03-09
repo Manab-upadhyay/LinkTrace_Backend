@@ -10,20 +10,20 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 dns.setDefaultResultOrder("ipv4first");
 
 // ── Transporter (Gmail SMTP) ──
-const transporter = nodemailer.createTransport({
-  service: "gmail",   // let nodemailer handle host/port automatically
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});  
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",   // let nodemailer handle host/port automatically
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });  
 
-// ── Verify connection on startup ──
-transporter.verify().then(() => {
-  console.log("📧 Email service ready");
-}).catch((err) => {
-  console.error("📧 Email service error:", err.message);
-});
+// // ── Verify connection on startup ──
+// transporter.verify().then(() => {
+//   console.log("📧 Email service ready");
+// }).catch((err) => {
+//   console.error("📧 Email service error:", err.message);
+// });
 
 // ── Generic send helper ──
 interface SendMailOptions {
@@ -37,8 +37,8 @@ export async function sendMail({ to, subject, html, text }: SendMailOptions) {
   try {
     console.log("📧 Email service started");
 
-    const info = await transporter.sendMail({
-      from: `"LinkTrace" <${process.env.EMAIL_USER}>`,
+    const info = await resend.emails.send({
+       from: "LinkTrace <onboarding@resend.dev>",
       to,
       subject,
       html,
