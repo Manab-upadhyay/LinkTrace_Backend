@@ -45,7 +45,7 @@ export async function sendMail({ to, subject, html, text }: SendMailOptions) {
       text: text ?? "",
     });
 
-    console.log("✅ Email sent successfully:", info.messageId);
+    console.log("✅ Email sent successfully:", info);
     return info;
 
   } catch (error) {
