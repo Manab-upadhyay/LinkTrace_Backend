@@ -10,28 +10,27 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 dns.setDefaultResultOrder("ipv4first");
 
 // ── Transporter (Gmail SMTP) ──
-// const transporter = nodemailer.createTransport({
-//   host: "smtp.gmail.com",
-//   port: 465,
-//   secure: true, // true for 465, false for other ports
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS, // Gmail App Password
-//   },
-//   tls: {
-//     rejectUnauthorized: false
-//   },
-//   // Force IPv4 in Node.js
-//   family: 4
-// } as any);
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // true for 465, false for other ports
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS, // Gmail App Password
+  },
+  tls: {
+    rejectUnauthorized: false
+  },
+  // Force IPv4 in Node.js (Crucial for Railway + Gmail)
+  family: 4
+} as any);
 
-
-// // ── Verify connection on startup ──
-// transporter.verify().then(() => {
-//   console.log("📧 Email service ready");
-// }).catch((err) => {
-//   console.error("📧 Email service error:", err.message);
-// });
+// ── Verify connection on startup ──
+transporter.verify().then(() => {
+  console.log("📧 Email service ready");
+}).catch((err) => {
+  console.error("📧 Email service error:", err.message);
+});
 
 // ── Generic send helper ──
 interface SendMailOptions {
@@ -45,7 +44,7 @@ export async function sendMail({ to, subject, html, text }: SendMailOptions) {
   try {
     console.log("📧 Email service started");
 
-    const info = await resend.emails.send({
+    const info = await transporter.sendMail({
       from: `"LinkTrace" <${process.env.EMAIL_USER}>`,
       to,
       subject,
@@ -53,11 +52,11 @@ export async function sendMail({ to, subject, html, text }: SendMailOptions) {
       text: text ?? "",
     });
 
-    console.log(" Email sent:", info.data);
+    console.log("✅ Email sent successfully:", info.messageId);
     return info;
 
   } catch (error) {
-    console.error(" Email service error:", error);
+    console.error("❌ Email service exception:", error);
     throw error;
   }
 }
