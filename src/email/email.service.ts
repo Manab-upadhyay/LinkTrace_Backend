@@ -11,9 +11,9 @@ dns.setDefaultResultOrder("ipv4first");
 
 // ── Transporter (Gmail SMTP) ──
 const transporter = nodemailer.createTransport({
-  host: "142.250.102.108", // IPv4 address for smtp.gmail.com
-  port: 465,
-  secure: true, // true for 465, false for other ports
+  host: "smtp.gmail.com", // IPv4 address for smtp.gmail.com
+  port: 587,
+  secure: false, // true for 465, false for other ports
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS, // Gmail App Password
@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false,
     servername: "smtp.gmail.com", // Important so SSL cert matches
   },
-} as any);
+} as any);  
 
 // ── Verify connection on startup ──
 transporter.verify().then(() => {
