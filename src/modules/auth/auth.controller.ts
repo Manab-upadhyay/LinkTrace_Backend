@@ -23,7 +23,7 @@ const verifySignupController = asyncHandler(async (req: any, res: any) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: process.env.NODE_ENV === "development" ? "strict" : "none",
   });
 
   return res
@@ -38,7 +38,7 @@ const loginController = asyncHandler(async (req: any, res: any) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "development" ? "strict" : "none",
     maxAge: 24 * 60 * 60 * 1000,
   });
 
@@ -48,7 +48,11 @@ const loginController = asyncHandler(async (req: any, res: any) => {
 const logoutController = asyncHandler(async (req: any, res: any) => {
   const userId = req.user._id;
   await logout(userId);
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "development" ? "strict" : "none",
+  });
   return res.status(200).json({ message: "Logout successful" });
 });
 

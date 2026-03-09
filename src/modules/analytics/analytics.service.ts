@@ -19,6 +19,7 @@ async function getLinkAnalyticsPerHour(linkId: string, userId: string) {
         },
       },
     },
+    
     {
       $group: {
         _id: {
@@ -83,8 +84,7 @@ async function getUserAnalytics(userId: string) {
 }
 async function getClicksGroupedByHour(
   userId: string,
-  startDate?: Date,
-  endDate?: Date,
+
 ) {
   // Step 1: Get all user's links
   const links = await Link.find(
@@ -102,13 +102,17 @@ async function getClicksGroupedByHour(
   const matchStage: any = {
     linkId: { $in: linkIds },
   };
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
 
-  if (startDate && endDate) {
+    const endDate = new Date();
+    endDate.setHours(23, 59, 59, 999);
+  
     matchStage.createdAt = {
       $gte: startDate,
       $lte: endDate,
     };
-  }
+  
 
   // Step 3: Aggregate clicks
   const analytics = await countModel.aggregate([

@@ -44,13 +44,7 @@ export const getHourlyClicksController = asyncHandler(
   async (req: any, res: any) => {
     const userId = req.user.id;
 
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
-
-    const data = await getClicksGroupedByHour(userId, start, end);
+    const data = await getClicksGroupedByHour(userId);
 
     res.status(200).json({
       success: true,
