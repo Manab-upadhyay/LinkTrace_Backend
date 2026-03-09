@@ -68,6 +68,14 @@ async function deleteLink(linkId: string, userId: string) {
   }
   return deletedLink;
 }
+async function getTopLinks(userId:string){
+  const topLinks = await Link.find({ userId })
+    .sort({ clicks: -1 })
+    .limit(5)
+    .select("name url shortCode clicks createdAt").lean();
+
+  return topLinks;
+}
 async function updateLink(
   linkId: string,
   userId: string,
@@ -83,4 +91,4 @@ async function updateLink(
   }
   return updatedLink;
 }
-export { addLink, getLink, getUserLinks, deleteLink, updateLink };
+export { addLink, getLink, getUserLinks, deleteLink, updateLink, getTopLinks };

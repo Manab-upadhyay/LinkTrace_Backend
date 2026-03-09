@@ -3,6 +3,7 @@ import {
   getLinkController,
   getUserLinksController,
   deleteLinkController,
+  getTopLinksController,
 } from "./link.controller";
 import { Router } from "express";
 import { protect } from "../../middleware/auth.middleware";
@@ -27,6 +28,7 @@ router.get(
   getLinkController,
 );
 router.get("/getUserLinks", protect, getUserLinksController);
+router.get("/getTopLinks", protect, getTopLinksController);
 router.delete("/deleteLink/:linkId", protect, deleteLinkController);
 
 export default router;

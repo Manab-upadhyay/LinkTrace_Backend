@@ -54,5 +54,6 @@ const linkSchema = new mongoose.Schema<ILink>(
 
 // Compound index for dashboard queries
 linkSchema.index({ userId: 1, createdAt: -1 });
+linkSchema.index({ userId: 1, clicks: -1 });
 
 export default mongoose.model<ILink>("Link", linkSchema);

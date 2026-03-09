@@ -4,6 +4,7 @@ import {
   getUserLinks,
   updateLink,
   deleteLink,
+  getTopLinks
 } from "./link.service";
 import { asyncHandler } from "../../utils/asynchandler";
 import { ApiError } from "../../utils/ApiError";
@@ -46,6 +47,11 @@ export const getUserLinksController = asyncHandler(
     res.status(200).json({links,totalLinks});
   },
 );
+export const getTopLinksController = asyncHandler(async (req: any, res: any) => {
+  const userId = req.userId;
+  const topLinks = await getTopLinks(userId);
+  res.status(200).json(topLinks);
+});
 export const updateLinkController = asyncHandler(async (req: any, res: any) => {
   const { linkId } = req.params;
   if (!linkId) {
