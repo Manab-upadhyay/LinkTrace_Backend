@@ -10,5 +10,5 @@ export const redis = new Redis(redisUrl, {
   maxRetriesPerRequest: null,
   ...(useTls ? { tls: {} } : {}),
   enableReadyCheck: false,
-  retryStrategy: (times) => Math.min(times * 500, 5000),
+  retryStrategy: (times) => Math.min(times * 500, 10000),
 });

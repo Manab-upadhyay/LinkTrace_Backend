@@ -34,7 +34,7 @@ const verifySignupController = asyncHandler(async (req: any, res: any) => {
 const loginController = asyncHandler(async (req: any, res: any) => {
   const { email, password } = req.body;
   const { token, user } = await login(email, password);
-
+console.log(process.env.NODE_ENV)
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
