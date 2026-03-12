@@ -6,6 +6,10 @@ import {
   updatePassword,
   verifySignupOtp,
   googleLogin,
+  verifyUpdatePasswordOtp,
+  resendForgetPassOtp,
+  resendSingupOtp
+  
 } from "./auth.service";
 import { asyncHandler } from "../../utils/asynchandler";
 import logger from "../../utils/logger";
@@ -93,7 +97,23 @@ const googleLoginController = asyncHandler(async (req: any, res: any) => {
 
   return res.status(200).json({ message: "Google login successful", user });
 });
+const verifyUpdatePasswordController= asyncHandler(async(req:any,res:any)=>{
+  const {email,otp}=req.body;
+  const result=await verifyUpdatePasswordOtp(email,otp);
+  return res.status(200).json(result);
+})
+const resendSingupOtpController= asyncHandler(async(req:any, res:any)=>{
+  const {email}= req.body
+  const result= await resendSingupOtp(email)
+  return res.status(200).json({message:"otp send succesfully"})
 
+})
+const resendForgetPasswordOtpController= asyncHandler(async(req:any, res:any)=>{
+  const {email}= req.body
+  const result= await resendForgetPassOtp(email)
+  return res.status(200).json({message:"otp send succesfully"})
+
+})
 export {
   signupController,
   verifySignupController,
@@ -102,4 +122,7 @@ export {
   getUserController,
   updateUserPasswordController,
   googleLoginController,
+  verifyUpdatePasswordController,
+  resendForgetPasswordOtpController,
+  resendSingupOtpController
 };

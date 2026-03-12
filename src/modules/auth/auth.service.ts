@@ -8,6 +8,7 @@ import { SendOtp, sendWelcomeEmail } from "../../email/email.service";
 import { OAuth2Client } from "google-auth-library";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { email } from "zod";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -35,11 +36,25 @@ async function signup(email: string, password: string, name: string) {
   await redis.set(`otp:${email}`, hashedOtp, "EX", 900);
 
   // Send OTP via email
-  await SendOtp(email, otp);
+   SendOtp(email, otp);
 
   return { message: "OTP sent to your email. Verify to complete signup." };
 }
+async function resendSingupOtp(email:string){
+   const session = await redis.get(`otp:${email}`);
+  if (!session) {
+    throw new ApiError(400, "Password reset session expired. Please restart.");
+  }
+  await redis.del(`otp:${email}`)
+   const otp = generateOTP();
+  const hashedOtp = await bcrypt.hash(otp, 10);
+  await redis.set(`otp:${email}`, hashedOtp, "EX", 900);
 
+  // Send OTP via email
+   SendOtp(email, otp);
+
+  return { message: "OTP sent to your email. Verify to complete signup." };
+}
 // ── Step 2: Verify OTP → create user in DB, return token ──
 async function verifySignupOtp(email: string, otp: string) {
   // Check OTP
@@ -89,11 +104,11 @@ async function verifySignupOtp(email: string, otp: string) {
 async function login(email: string, password: string) {
   const user = await User.findOne({ email });
   if (!user) {
-    throw new ApiError(401, "Invalid email or password");
+    throw new ApiError(400, "Invalid email or password");
   }
   const isMatch = await comparePassword.call(user, password);
   if (!isMatch) {
-    throw new ApiError(401, "Invalid email or password");
+    throw new ApiError(400, "Invalid email or password");
   }
   const token = generateToken(user._id.toString(), user.tokenversion);
   const safeUser = {
@@ -184,12 +199,71 @@ async function updatePassword(email: string, newPassword: string) {
   if (!user) {
     throw new Error("User not found");
   }
+
   if (newPassword.length < 6) {
     throw new ApiError(400, "Password must be at least 6 characters long");
   }
+
+  await redis.set(`updatePassword:${email}`, newPassword, "EX", 900);
+
+  const otp = generateOTP();
+  const hashedOtp = await bcrypt.hash(otp, 10);
+
+  await redis.set(`updatePasswordOtp:${email}`, hashedOtp, "EX", 900);
+
+   SendOtp(email, otp);
+}
+async function resendForgetPassOtp(email: string) {
+
+  const session = await redis.get(`updatePassword:${email}`);
+  if (!session) {
+    throw new ApiError(400, "Password reset session expired. Please restart.");
+  }
+
+  await redis.del(`updatePasswordOtp:${email}`);
+
+  const otp = generateOTP();
+  const hashedOtp = await bcrypt.hash(otp, 10);
+
+  await redis.set(`updatePasswordOtp:${email}`, hashedOtp, "EX", 900);
+
+  await SendOtp(email, otp);
+
+  return { message: "OTP resent successfully." };
+}
+async function verifyUpdatePasswordOtp(email: string, otp: string) {
+
+  const hashedOtp = await redis.get(`updatePasswordOtp:${email}`);
+  if (!hashedOtp) {
+    throw new ApiError(400, "OTP expired or not found. Please try again.");
+  }
+
+  const isMatch = await bcrypt.compare(otp, hashedOtp);
+  if (!isMatch) {
+    throw new ApiError(400, "Invalid OTP");
+  }
+
+  const newPassword = await redis.get(`updatePassword:${email}`);
+  if (!newPassword) {
+    throw new ApiError(400, "Password reset session expired.");
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+
+
   user.password = newPassword;
   user.tokenversion += 1;
+
   await user.save();
+
+  await redis.del(`updatePassword:${email}`);
+  await redis.del(`updatePasswordOtp:${email}`);
+
+  return true;
 }
 
-export { signup, verifySignupOtp, login, logout, getUserById, updatePassword, googleLogin };
+export { signup, verifySignupOtp, login, logout, getUserById, updatePassword, googleLogin, verifyUpdatePasswordOtp, resendForgetPassOtp, resendSingupOtp };

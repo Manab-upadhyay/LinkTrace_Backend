@@ -69,8 +69,17 @@ app.get("/", (req, res) => {
 app.get("/api/health", async (req, res) => {
   try {
     const { redis } = await import("./config/cache.redis");
+    const mongoose = (await import("mongoose")).default;
+    
     const redisStatus = redis.status;
-    res.status(200).json({ status: "ok", redis: redisStatus });
+    const mongoStatus = mongoose.connection.readyState === 1 ? "connected" : "disconnected";
+
+    res.status(200).json({ 
+      status: "ok", 
+      redis: redisStatus,
+      mongodb: mongoStatus,
+      server: "running"
+    });
   } catch (error: any) {
     res.status(500).json({ status: "error", message: error.message });
   }
