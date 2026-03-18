@@ -13,6 +13,7 @@ import {
 } from "./auth.service";
 import { asyncHandler } from "../../utils/asynchandler";
 import logger from "../../utils/logger";
+import { setCsrfCookie } from "../../middleware/csrf.middleware";
 
 // Step 1: Signup → sends OTP
 const signupController = asyncHandler(async (req: any, res: any) => {
@@ -32,6 +33,8 @@ const verifySignupController = asyncHandler(async (req: any, res: any) => {
     sameSite: process.env.NODE_ENV === "development" ? "strict" : "none",
   });
 
+  setCsrfCookie(res);
+
   return res
     .status(201)
     .json({ message: "Account created successfully", user });
@@ -47,6 +50,8 @@ const loginController = asyncHandler(async (req: any, res: any) => {
     sameSite: process.env.NODE_ENV === "development" ? "strict" : "none",
     maxAge: 24 * 60 * 60 * 1000,
   });
+
+  setCsrfCookie(res);
 
   return res.status(200).json({ message: "Login successful", user });
 });
@@ -95,6 +100,8 @@ const googleLoginController = asyncHandler(async (req: any, res: any) => {
     maxAge: 24 * 60 * 60 * 1000,
   });
 
+  setCsrfCookie(res);
+
   return res.status(200).json({ message: "Google login successful", user });
 });
 const verifyUpdatePasswordController= asyncHandler(async(req:any,res:any)=>{
@@ -114,6 +121,12 @@ const resendForgetPasswordOtpController= asyncHandler(async(req:any, res:any)=>{
   return res.status(200).json({message:"otp send succesfully"})
 
 })
+
+const getCsrfTokenController = asyncHandler(async (req: any, res: any) => {
+  setCsrfCookie(res);
+  return res.status(200).json({ message: "CSRF token initialized" });
+});
+
 export {
   signupController,
   verifySignupController,
@@ -124,5 +137,6 @@ export {
   googleLoginController,
   verifyUpdatePasswordController,
   resendForgetPasswordOtpController,
-  resendSingupOtpController
+  resendSingupOtpController,
+  getCsrfTokenController
 };

@@ -9,24 +9,26 @@ import {
   googleLoginController,
   verifyUpdatePasswordController,
   resendForgetPasswordOtpController,
-  resendSingupOtpController
+  resendSingupOtpController,
+  getCsrfTokenController
 } from "./auth.controller";
 import { protect } from "../../middleware/auth.middleware";
 
-const router = Router();
+const authRouter = Router();
 
 // Public
-router.post("/signup", signupController);
-router.post("/verify-signup", verifySignupController);
-router.post("/login", loginController);
-router.post("/google", googleLoginController);
-router.put("/updatePassword", updateUserPasswordController);
-router.post("/verify-update-password", verifyUpdatePasswordController);
-router.post("/resend-signup-otp", resendSingupOtpController)
+authRouter.get("/csrf-token", getCsrfTokenController);
+authRouter.post("/signup", signupController);
+authRouter.post("/verify-signup", verifySignupController);
+authRouter.post("/login", loginController);
+authRouter.post("/google", googleLoginController);
+authRouter.put("/updatePassword", updateUserPasswordController);
+authRouter.post("/verify-update-password", verifyUpdatePasswordController);
+authRouter.post("/resend-signup-otp", resendSingupOtpController)
 
-router.post("/resend-forget-password-otp", resendForgetPasswordOtpController)
+authRouter.post("/resend-forget-password-otp", resendForgetPasswordOtpController)
 // Protected
-router.post("/logout", protect, logoutController);
-router.get("/me", protect, getUserController);
+authRouter.post("/logout", protect, logoutController);
+authRouter.get("/me", protect, getUserController);
 
-export default router;
+export default authRouter;

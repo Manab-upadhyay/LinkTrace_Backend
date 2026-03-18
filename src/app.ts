@@ -23,6 +23,7 @@ import { startApiUsageWorker } from "./modules/apiUsage/worker/apiUsage.worker";
 import errorMiddleware from "./middleware/error.middleware";
 import { authRateLimiter } from "./middleware/rateLimiter.middleware";
 import { apiRateLimiter } from "./middleware/rateLimiter.middleware";
+import { csrfProtection } from "./middleware/csrf.middleware";
 
 const app = express();
 
@@ -58,6 +59,7 @@ app.use(
 
 app.use(cookieParser());
 
+
 /* =======================
    ROUTES
 ======================= */
@@ -87,7 +89,8 @@ app.get("/api/health", async (req, res) => {
 
 app.use("/api/auth", authRateLimiter, authRoutes);
 app.use("/api/email", emailRoute);
-
+app.use("/", apiRateLimiter, redirectRoutes);
+app.use(csrfProtection);
 // Dashboard (JWT)
 app.use("/api/links", apiRateLimiter, linkRoutes);
 app.use("/api/analytics", apiRateLimiter, analyticsRoutes);
@@ -102,7 +105,7 @@ app.use("/api/media", apiRateLimiter, mediaRoutes);
 app.use("/api/v1/links", apiRateLimiter, developersRoute);
 
 // Public redirect
-app.use("/", apiRateLimiter, redirectRoutes);
+
 app.use(errorMiddleware); // Global error handler (LAST)
 
 /* =======================

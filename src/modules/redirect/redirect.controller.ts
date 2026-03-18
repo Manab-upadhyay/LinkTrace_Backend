@@ -13,6 +13,11 @@ export const redirectController = asyncHandler(async (req: any, res: any) => {
   if (!shortCode) {
     throw new ApiError(400, "Short code is required");
   }
+  const start = performance.now();
   const url = await redirect(shortCode, ip, userAgent, req.userId);
+  const duration = performance.now() - start;
+
+  res.setHeader('Server-Timing', `db;dur=${duration};desc="Database/Cache Lookup"`);
+
   return res.redirect(url);
 });
