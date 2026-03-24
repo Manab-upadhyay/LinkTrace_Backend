@@ -33,11 +33,11 @@ const verifySignupController = asyncHandler(async (req: any, res: any) => {
     sameSite: process.env.NODE_ENV === "development" ? "strict" : "none",
   });
 
-  setCsrfCookie(res);
+  const csrfToken= setCsrfCookie(res);
 
   return res
     .status(201)
-    .json({ message: "Account created successfully", user });
+    .json({ message: "Account created successfully", user, csrftoken: csrfToken });
 });
 
 const loginController = asyncHandler(async (req: any, res: any) => {
@@ -51,9 +51,9 @@ const loginController = asyncHandler(async (req: any, res: any) => {
     maxAge: 24 * 60 * 60 * 1000,
   });
 
-  setCsrfCookie(res);
+  const csrfToken= setCsrfCookie(res);
 
-  return res.status(200).json({ message: "Login successful", user });
+  return res.status(200).json({ message: "Login successful", user, csrftoken: csrfToken });
 });
 
 const logoutController = asyncHandler(async (req: any, res: any) => {
