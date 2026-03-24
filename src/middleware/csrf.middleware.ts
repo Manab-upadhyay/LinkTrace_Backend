@@ -35,7 +35,7 @@ export const setCsrfCookie = (res: Response) => {
   res.cookie("csrfToken", token, {
     httpOnly: false, // Needs to be readable by frontend JS
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    sameSite: process.env.NODE_ENV === "development" ? "strict" : "none",
     path: "/",
   });
   return token;
