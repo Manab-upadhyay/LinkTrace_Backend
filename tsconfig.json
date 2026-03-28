@@ -16,5 +16,5 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "exclude": ["test-normalize.ts"]
+  "exclude": ["src/test-normalize.ts"]
 }
