@@ -13,6 +13,7 @@ export const csrfProtection = (req: Request, res: Response, next: NextFunction) 
   if (safeMethods.includes(req.method)) {
     return next();
   }
+  console.log(req.headers)
 
   // 2. Get tokens from cookie and header
   const csrfCookie = req.cookies["csrfToken"];

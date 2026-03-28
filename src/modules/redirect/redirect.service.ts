@@ -75,7 +75,7 @@ async function redirect(
   );
 
   analyticsQueue
-    .add("trackClick", {
+    .add("analyticsQueue", {
       linkId: link._id,
       userId: userId ?? null,
       shortCode,

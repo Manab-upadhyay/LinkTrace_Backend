@@ -8,7 +8,8 @@ const useTls = redisUrl.startsWith("rediss://");
 
 export const redis = new Redis(redisUrl, {
   maxRetriesPerRequest: null,
-  ...(useTls ? { tls: {} } : {}),
+  ...(useTls ? { tls: { rejectUnauthorized: false } } : {}),
+  family: 4, // Force IPv4 to prevent ETIMEDOUT due to IPv6 DNS resolution issues
   enableReadyCheck: false,
   retryStrategy: (times) => Math.min(times * 500, 10000),
 });
