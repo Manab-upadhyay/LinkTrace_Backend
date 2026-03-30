@@ -10,7 +10,7 @@ import crypto from "crypto";
 export const csrfProtection = (req: Request, res: Response, next: NextFunction) => {
   // 1. Ignore safe methods
   const safeMethods = ["GET", "HEAD", "OPTIONS"];
-  if (safeMethods.includes(req.method)) {
+  if (safeMethods.includes(req.method) || req.path.startsWith("/api/v1")) {
     return next();
   }
 

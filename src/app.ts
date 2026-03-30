@@ -93,7 +93,7 @@ app.get("/api/health", async (req, res) => {
 app.use("/api/auth", authRateLimiter, authRoutes);
 app.use("/api/email", emailRoute);
 // Developer API (versioned)
-app.use("/api/v1/links", apiRateLimiter, developersRoute);
+app.use("/api/v1", apiRateLimiter, developersRoute);
 app.use(csrfProtection);
 // Dashboard (JWT)
 app.use("/api/links", apiRateLimiter, linkRoutes);

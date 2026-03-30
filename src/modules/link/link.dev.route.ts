@@ -26,7 +26,7 @@ router.use(checkApiLimit);
 
 // Create link via API
 router.post(
-  "/addLinks",
+  "/links",
   validate(createLinkSchema),
   checkLinkLimit,
   addLinkController,
@@ -34,7 +34,7 @@ router.post(
 
 // Get link info
 router.get("/links/:shortCode", validate(redirectSchema), getLinkController);
-router.get("/getMyLinks", getUserLinksController);
+router.get("/links", getUserLinksController);
 
 // Delete link
 router.delete("/links/:linkId", deleteLinkController);
