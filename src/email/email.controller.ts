@@ -1,4 +1,4 @@
-import { sendWelcomeEmail, SendEmailToAuthority, SendFeedBackResponseEmail } from "./email.service";
+import { sendWelcomeEmail, SendEmailToAuthority, SendFeedBackResponseEmail , sendPasswordResetEmail} from "./email.service";
 import { asyncHandler } from "../utils/asynchandler";
 import { generateOTP } from "../utils/generateOTP";
 import { SendOtp } from "./email.service";
@@ -24,6 +24,11 @@ export const sendOtpController = asyncHandler(async (req: any, res: any) => {
 );
     await SendOtp(email, otp);
     return res.status(200).json({ message: "OTP sent successfully" });
+});
+export const sendPasswordResetEmailController = asyncHandler(async (req: any, res: any) => {
+    const { email, resetToken } = req.body;
+    await sendPasswordResetEmail(email, resetToken);
+    return res.status(200).json({ message: "Password reset email sent successfully" });
 });
 export const SendFeedBackEmailResponseController = asyncHandler(async (req: any, res: any) => {
     const { email, feedback } = req.body;

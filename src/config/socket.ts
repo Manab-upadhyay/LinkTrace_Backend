@@ -28,7 +28,6 @@ export function initSocket(httpServer: HttpServer): SocketIOServer {
     });
   });
 
-  // Dedicated subscriber Redis client — pub/sub mode blocks other commands
   const redisUrl = process.env.REDIS_URL || "redis://127.0.0.1:6379";
   const useTls = redisUrl.startsWith("rediss://");
 
